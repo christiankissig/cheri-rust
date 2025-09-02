@@ -1683,6 +1683,7 @@ supported_targets! {
     ("riscv32imac-esp-espidf", riscv32imac_esp_espidf),
     ("riscv32imafc-esp-espidf", riscv32imafc_esp_espidf),
 
+    ("riscv32cheriot-unknown-cheriotrtos", riscv32cheriot_unknown_cheriotrtos),
     ("riscv32e-unknown-none-elf", riscv32e_unknown_none_elf),
     ("riscv32em-unknown-none-elf", riscv32em_unknown_none_elf),
     ("riscv32emc-unknown-none-elf", riscv32emc_unknown_none_elf),
@@ -1976,6 +1977,7 @@ crate::target_spec_enum! {
         Aix = "aix",
         AmdHsa = "amdhsa",
         Android = "android",
+        CHERIoTRTOS = "cheriotrtos",
         Cuda = "cuda",
         Cygwin = "cygwin",
         Dragonfly = "dragonfly",
@@ -2069,6 +2071,7 @@ crate::target_spec_enum! {
         Abi64 = "abi64",
         AbiV2 = "abiv2",
         AbiV2Hf = "abiv2hf",
+        CHERIoT = "cheriot",
         Eabi = "eabi",
         EabiHf = "eabihf",
         ElfV1 = "elfv1",
@@ -3242,7 +3245,8 @@ impl Target {
                     ("ilp32", Abi::Unspecified | Abi::Other(_))
                         | ("ilp32f", Abi::Unspecified | Abi::Other(_))
                         | ("ilp32d", Abi::Unspecified | Abi::Other(_))
-                        | ("ilp32e", Abi::Ilp32e),
+                        | ("ilp32e", Abi::Ilp32e)
+                        | ("cheriot", Abi::CHERIoT),
                     "invalid RISC-V ABI name and `cfg(target_abi)` combination:\n\
                      ABI name: {}\n\
                      cfg(target_abi): {}",
