@@ -866,7 +866,7 @@ where
             !s1.is_uninit_valid()
                 && !s2.is_uninit_valid()
                 // Ensure there is no padding.
-                && s1.size(cx) + s2.size(cx) == layout.size
+                && s1.in_memory_size(cx) + s2.in_memory_size(cx) == layout.size
         }
         BackendRepr::Memory { .. } => match layout.fields {
             FieldsShape::Primitive | FieldsShape::Union(_) => false,
