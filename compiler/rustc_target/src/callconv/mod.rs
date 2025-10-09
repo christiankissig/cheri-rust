@@ -1,10 +1,8 @@
 use std::{fmt, iter};
 
 use rustc_abi::{
-    AddressSpace, Align, BackendRepr, CanonAbi, ExternAbi, FieldsShape, HasDataLayout, Primitive,
-    Reg, RegKind, Scalar, Size, TyAbiInterface, TyAndLayout, Variants,
-    Align, BackendRepr, CanonAbi, ExternAbi, HasDataLayout, Primitive, Reg, RegKind, Scalar, Size,
-    TyAbiInterface, TyAndLayout,
+    Align, BackendRepr, CanonAbi, ExternAbi, FieldsShape, HasDataLayout, Primitive, Reg, RegKind,
+    Scalar, Size, TyAbiInterface, TyAndLayout, Variants,
 };
 use rustc_macros::HashStable_Generic;
 
@@ -390,7 +388,7 @@ impl<'a, Ty> ArgAbi<'a, Ty> {
             BackendRepr::Scalar(scalar) => PassMode::Direct(scalar_attrs(scalar, Size::ZERO)),
             BackendRepr::ScalarPair(a, b) => PassMode::Pair(
                 scalar_attrs(a, Size::ZERO),
-                scalar_attrs(b, a.size(cx).align_to(b.align(cx).abi)),
+                scalar_attrs(b, a.in_memory_size(cx).align_to(b.align(cx).abi)),
             ),
             BackendRepr::SimdVector { .. } => PassMode::Direct(ArgAttributes::new()),
             BackendRepr::Memory { .. } => Self::indirect_pass_mode(&layout),
@@ -745,7 +743,8 @@ impl<'a, Ty> FnAbi<'a, Ty> {
             }
 
             if arg_idx.is_none()
-                && arg.layout.size > Primitive::Pointer(dl.default_address_space).size(cx) * 2
+                && arg.layout.size
+                    > Primitive::Pointer(dl.default_address_space).in_memory_size(cx) * 2
                 && !matches!(arg.layout.backend_repr, BackendRepr::SimdVector { .. })
             {
                 // Return values larger than 2 registers using a return area
@@ -804,7 +803,7 @@ impl<'a, Ty> FnAbi<'a, Ty> {
 
                     let size = arg.layout.size;
                     if arg.layout.is_sized()
-                        && size <= Primitive::Pointer(dl.default_address_space).size(cx)
+                        && size <= Primitive::Pointer(dl.default_address_space).in_memory_size(cx)
                     {
                         // We want to pass small aggregates as immediates, but using
                         // an LLVM aggregate type for this leads to bad optimizations,
